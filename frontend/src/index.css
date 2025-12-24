@@ -1,7 +1,4 @@
 /* Modern Chat App Styles - No build step required */
-
-@tailwind base;
-@tailwind components;
 @tailwind utilities;
 
 * {

@@ -5,9 +5,9 @@ console.log("OpenRouter key loaded:", !!OPENROUTER_API_KEY);
 
 const MODELS = [
     "gpt-4o-mini",
-    "deepseek/deepseek-r1:free",
-    "mistralai/mistral-7b-instruct:free",
-    "z-ai/glm-4.5-air:free",
+    // "deepseek/deepseek-r1:free",
+    // "mistralai/mistral-7b-instruct:free",
+    // "z-ai/glm-4.5-air:free",
 ];
 
 type ChatMessage = {
