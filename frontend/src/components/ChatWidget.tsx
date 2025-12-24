@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import type { CSSProperties } from "react";
 import { sendMessage } from "../api/chat.api";
 
 interface Message {
@@ -117,204 +116,27 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
     }
   };
 
-  // Styles
-  const containerStyle: CSSProperties = {
-    width: "100%",
-    maxWidth: "672px",
-    height: "700px",
-    borderRadius: "1rem",
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-    display: "flex",
-    flexDirection: "column",
-    overflow: "hidden",
-    transition: "all 0.3s ease",
-    backgroundColor: isDarkMode ? "#111827" : "#ffffff",
-    color: isDarkMode ? "#f3f4f6" : "#111827",
-  };
-
-  const headerStyle: CSSProperties = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "1rem 1.5rem",
-    borderBottom: `1px solid ${isDarkMode ? "#374151" : "#e5e7eb"}`,
-    background: isDarkMode
-      ? "rgba(31, 41, 55, 0.5)"
-      : "linear-gradient(to right, #faf5ff, #eff6ff)",
-    backdropFilter: "blur(10px)",
-  };
-
-  const headerLeftStyle: CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.75rem",
-  };
-
-  const avatarStyle: CSSProperties = {
-    width: "2.5rem",
-    height: "2.5rem",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "1.25rem",
-    background: isDarkMode
-      ? "#7c3aed"
-      : "linear-gradient(to bottom right, #a855f7, #3b82f6)",
-  };
-
-  const toggleButtonStyle: CSSProperties = {
-    padding: "0.625rem",
-    borderRadius: "0.75rem",
-    border: "none",
-    background: isDarkMode ? "#374151" : "#ffffff",
-    cursor: "pointer",
-    transition: "all 0.2s",
-    fontSize: "1.25rem",
-    boxShadow: isDarkMode ? "none" : "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-  };
-
-  const messagesContainerStyle: CSSProperties = {
-    flex: 1,
-    overflowY: "auto",
-    padding: "1.5rem 1rem",
-    background: isDarkMode
-      ? "#111827"
-      : "linear-gradient(to bottom, #f9fafb, #ffffff)",
-  };
-
-  const emptyStateStyle: CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100%",
-    textAlign: "center",
-  };
-
-  const messageRowStyle = (isUser: boolean): CSSProperties => ({
-    display: "flex",
-    gap: "0.5rem",
-    marginBottom: "1rem",
-    justifyContent: isUser ? "flex-end" : "flex-start",
-    animation: "fadeIn 0.3s ease-in",
-  });
-
-  const messageBubbleStyle = (isUser: boolean): CSSProperties => ({
-    maxWidth: "75%",
-    padding: "0.75rem 1rem",
-    borderRadius: "1rem",
-    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-    ...(isUser
-      ? {
-          background: isDarkMode
-            ? "linear-gradient(to bottom right, #059669, #10b981)"
-            : "linear-gradient(to bottom right, #10b981, #34d399)",
-          color: "#ffffff",
-          borderBottomRightRadius: "0.25rem",
-        }
-      : {
-          background: isDarkMode ? "#1f2937" : "linear-gradient(to bottom right, #f3f4f6, #dbeafe)",
-          color: isDarkMode ? "#f3f4f6" : "#111827",
-          border: `1px solid ${isDarkMode ? "#374151" : "#e5e7eb"}`,
-          borderBottomLeftRadius: "0.25rem",
-        }),
-  });
-
-  const smallAvatarStyle = (isUser: boolean): CSSProperties => ({
-    width: "2rem",
-    height: "2rem",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "0.875rem",
-    flexShrink: 0,
-    background: isUser
-      ? isDarkMode
-        ? "#059669"
-        : "linear-gradient(to bottom right, #10b981, #34d399)"
-      : isDarkMode
-      ? "#7c3aed"
-      : "linear-gradient(to bottom right, #a855f7, #3b82f6)",
-  });
-
-  const inputAreaStyle: CSSProperties = {
-    padding: "1rem",
-    borderTop: `1px solid ${isDarkMode ? "#374151" : "#e5e7eb"}`,
-    background: isDarkMode ? "rgba(31, 41, 55, 0.5)" : "rgba(249, 250, 251, 0.5)",
-    backdropFilter: "blur(10px)",
-  };
-
-  const inputRowStyle: CSSProperties = {
-    display: "flex",
-    gap: "0.75rem",
-  };
-
-  const inputStyle: CSSProperties = {
-    flex: 1,
-    padding: "0.75rem 1rem",
-    borderRadius: "0.75rem",
-    border: `2px solid ${isDarkMode ? "#374151" : "#d1d5db"}`,
-    background: isDarkMode ? "#111827" : "#ffffff",
-    color: isDarkMode ? "#f3f4f6" : "#111827",
-    fontSize: "0.875rem",
-    outline: "none",
-    transition: "all 0.2s",
-  };
-
-  const sendButtonStyle: CSSProperties = {
-    padding: "0.75rem 1.5rem",
-    borderRadius: "0.75rem",
-    border: "none",
-    background: isDarkMode
-      ? "linear-gradient(to right, #7c3aed, #2563eb)"
-      : "linear-gradient(to right, #a855f7, #3b82f6)",
-    color: "#ffffff",
-    fontWeight: 500,
-    cursor: loading || !input.trim() ? "not-allowed" : "pointer",
-    opacity: loading || !input.trim() ? 0.5 : 1,
-    transition: "all 0.2s",
-    boxShadow: isDarkMode ? "none" : "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-  };
-
-  const hintTextStyle: CSSProperties = {
-    fontSize: "0.75rem",
-    marginTop: "0.5rem",
-    textAlign: "center",
-    color: isDarkMode ? "#6b7280" : "#9ca3af",
-  };
-
-  const typingDotStyle: CSSProperties = {
-    width: "0.5rem",
-    height: "0.5rem",
-    borderRadius: "50%",
-    backgroundColor: isDarkMode ? "#a78bfa" : "#a855f7",
-    display: "inline-block",
-    margin: "0 0.125rem",
-    animation: "bounce 1.4s infinite ease-in-out both",
-  };
-
   return (
-    <div style={containerStyle}>
+    <div className={`w-full max-w-[672px] h-[700px] rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
+      isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'
+    }`}>
       {/* HEADER */}
-      <div style={headerStyle}>
-        <div style={headerLeftStyle}>
-          <div style={avatarStyle}>🤖</div>
+      <div className={`flex justify-between items-center px-6 py-4 border-b backdrop-blur-md ${
+        isDarkMode
+          ? 'border-gray-700 bg-gray-800/50'
+          : 'border-gray-200 bg-gradient-to-r from-purple-50 to-blue-50'
+      }`}>
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${
+            isDarkMode ? 'bg-violet-600' : 'bg-gradient-to-br from-purple-500 to-blue-500'
+          }`}>
+            🤖
+          </div>
           <div>
-            <h2 style={{ fontSize: "1.125rem", fontWeight: 700, margin: 0 }}>
+            <h2 className="text-lg font-bold m-0">
               AI Assistant
             </h2>
-            <p
-              style={{
-                fontSize: "0.75rem",
-                color: isDarkMode ? "#9ca3af" : "#6b7280",
-                margin: 0,
-              }}
-            >
+            <p className={`text-xs m-0 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               {sessionId ? "Session active" : "New conversation"}
             </p>
           </div>
@@ -322,13 +144,9 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
 
         <button
           onClick={toggleDarkMode}
-          style={toggleButtonStyle}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "scale(1.1)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "scale(1)";
-          }}
+          className={`px-2.5 py-2.5 rounded-xl border-none cursor-pointer transition-all duration-200 text-xl hover:scale-110 ${
+            isDarkMode ? 'bg-gray-700' : 'bg-white shadow-sm'
+          }`}
           title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
         >
           {isDarkMode ? "☀️" : "🌙"}
@@ -336,48 +154,48 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
       </div>
 
       {/* MESSAGES CONTAINER */}
-      <div style={messagesContainerStyle} className="chat-scrollbar">
+      <div className={`flex-1 overflow-y-auto px-4 py-6 chat-scrollbar ${
+        isDarkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-gray-50 to-white'
+      }`}>
         {messages.length === 0 && (
-          <div style={emptyStateStyle}>
-            <div style={{ fontSize: "3.75rem", marginBottom: "1rem" }}>💬</div>
-            <p
-              style={{
-                fontSize: "1.125rem",
-                fontWeight: 500,
-                color: isDarkMode ? "#d1d5db" : "#4b5563",
-              }}
-            >
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <div className="text-6xl mb-4">💬</div>
+            <p className={`text-lg font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               Start a conversation
             </p>
-            <p
-              style={{
-                fontSize: "0.875rem",
-                marginTop: "0.5rem",
-                color: isDarkMode ? "#6b7280" : "#9ca3af",
-              }}
-            >
+            <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}>
               Type a message below to begin
             </p>
           </div>
         )}
 
         {messages.map((message, index) => (
-          <div key={index} style={messageRowStyle(message.sender === "user")}>
+          <div key={index} className={`flex gap-2 mb-4 animate-fadeIn ${
+            message.sender === "user" ? 'justify-end' : 'justify-start'
+          }`}>
             {message.sender === "ai" && (
-              <div style={smallAvatarStyle(false)}>🤖</div>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${
+                isDarkMode ? 'bg-violet-600' : 'bg-gradient-to-br from-purple-500 to-blue-500'
+              }`}>
+                🤖
+              </div>
             )}
 
-            <div style={messageBubbleStyle(message.sender === "user")}>
-              <p style={{ fontSize: "0.875rem", lineHeight: 1.5, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+            <div className={`max-w-[75%] px-4 py-3 shadow-md ${
+              message.sender === "user"
+                ? `${isDarkMode
+                    ? 'bg-gradient-to-br from-emerald-600 to-emerald-500'
+                    : 'bg-gradient-to-br from-emerald-500 to-emerald-400'
+                  } text-white rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-[0.25rem]`
+                : `${isDarkMode
+                    ? 'bg-gray-800 text-gray-100 border border-gray-700'
+                    : 'bg-gradient-to-br from-gray-100 to-blue-50 text-gray-900 border border-gray-200'
+                  } rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-[0.25rem]`
+            }`}>
+              <p className="text-sm leading-6 m-0 whitespace-pre-wrap break-words">
                 {message.text}
               </p>
-              <p
-                style={{
-                  fontSize: "0.75rem",
-                  marginTop: "0.25rem",
-                  opacity: 0.7,
-                }}
-              >
+              <p className="text-xs mt-1 opacity-70">
                 {new Date(message.timestamp).toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
@@ -386,29 +204,42 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
             </div>
 
             {message.sender === "user" && (
-              <div style={smallAvatarStyle(true)}>👤</div>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${
+                isDarkMode
+                  ? 'bg-emerald-600'
+                  : 'bg-gradient-to-br from-emerald-500 to-emerald-400'
+              }`}>
+                👤
+              </div>
             )}
           </div>
         ))}
 
         {loading && (
-          <div style={messageRowStyle(false)}>
-            <div style={smallAvatarStyle(false)}>🤖</div>
-            <div style={messageBubbleStyle(false)}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <div style={{ display: "flex", gap: "0.25rem" }}>
-                  <span style={{ ...typingDotStyle, animationDelay: "0ms" }} />
-                  <span style={{ ...typingDotStyle, animationDelay: "150ms" }} />
-                  <span style={{ ...typingDotStyle, animationDelay: "300ms" }} />
+          <div className="flex gap-2 mb-4 justify-start">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${
+              isDarkMode ? 'bg-violet-600' : 'bg-gradient-to-br from-purple-500 to-blue-500'
+            }`}>
+              🤖
+            </div>
+            <div className={`max-w-[75%] px-4 py-3 shadow-md rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm ${
+              isDarkMode
+                ? 'bg-gray-800 text-gray-100 border border-gray-700'
+                : 'bg-gradient-to-br from-gray-100 to-blue-50 text-gray-900 border border-gray-200'
+            }`}>
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1">
+                  <span className={`w-2 h-2 rounded-full inline-block mx-0.5 animate-bounce ${
+                    isDarkMode ? 'bg-purple-400' : 'bg-purple-500'
+                  }`} style={{ animationDelay: '0ms' }} />
+                  <span className={`w-2 h-2 rounded-full inline-block mx-0.5 animate-bounce ${
+                    isDarkMode ? 'bg-purple-400' : 'bg-purple-500'
+                  }`} style={{ animationDelay: '150ms' }} />
+                  <span className={`w-2 h-2 rounded-full inline-block mx-0.5 animate-bounce ${
+                    isDarkMode ? 'bg-purple-400' : 'bg-purple-500'
+                  }`} style={{ animationDelay: '300ms' }} />
                 </div>
-                <p
-                  style={{
-                    fontSize: "0.875rem",
-                    fontStyle: "italic",
-                    color: isDarkMode ? "#9ca3af" : "#4b5563",
-                    margin: 0,
-                  }}
-                >
+                <p className={`text-sm italic m-0 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                   Agent is typing...
                 </p>
               </div>
@@ -420,8 +251,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
       </div>
 
       {/* INPUT AREA */}
-      <div style={inputAreaStyle}>
-        <div style={inputRowStyle}>
+      <div className={`p-4 border-t backdrop-blur-md ${
+        isDarkMode ? 'border-gray-700 bg-gray-800/50' : 'border-gray-200 bg-gray-50/50'
+      }`}>
+        <div className="flex gap-3">
           <input
             ref={inputRef}
             type="text"
@@ -430,52 +263,33 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
             onKeyDown={handleKeyDown}
             disabled={loading}
             placeholder={loading ? "Agent is typing..." : "Type your message..."}
-            style={inputStyle}
-            onFocus={(e) => {
-              e.currentTarget.style.borderColor = "#a855f7";
-              e.currentTarget.style.boxShadow = "0 0 0 3px rgba(168, 85, 247, 0.1)";
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.borderColor = isDarkMode ? "#374151" : "#d1d5db";
-              e.currentTarget.style.boxShadow = "none";
-            }}
+            className={`flex-1 px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all duration-200 focus:border-purple-500 focus:shadow-[0_0_0_3px_rgba(168,85,247,0.1)] ${
+              isDarkMode
+                ? 'border-gray-700 bg-gray-900 text-gray-100'
+                : 'border-gray-300 bg-white text-gray-900'
+            }`}
           />
 
           <button
             onClick={handleSend}
             disabled={loading || !input.trim()}
-            style={sendButtonStyle}
-            onMouseEnter={(e) => {
-              if (!loading && input.trim()) {
-                e.currentTarget.style.transform = "scale(1.05)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
-            }}
+            className={`px-6 py-3 rounded-xl border-none text-white font-medium transition-all duration-200 flex items-center gap-2 hover:scale-105 ${
+              isDarkMode
+                ? 'bg-gradient-to-r from-violet-600 to-blue-600'
+                : 'bg-gradient-to-r from-purple-500 to-blue-500 shadow-lg'
+            } ${
+              loading || !input.trim() ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+            }`}
           >
             <span>Send</span>
-            <span style={{ fontSize: "1.125rem" }}>📤</span>
+            <span className="text-lg">📤</span>
           </button>
         </div>
 
-        <p style={hintTextStyle}>
+        <p className={`text-xs mt-2 text-center ${isDarkMode ? 'text-gray-600' : 'text-gray-400'}`}>
           Press Enter to send • Shift + Enter for new line
         </p>
       </div>
-
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes bounce {
-          0%, 80%, 100% { transform: scale(0); }
-          40% { transform: scale(1); }
-        }
-      `}</style>
     </div>
   );
 };
-

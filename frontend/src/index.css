@@ -1,11 +1,5 @@
-/* Modern Chat App Styles - No build step required */
-@tailwind utilities;
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* Modern Chat App Styles */
+@import "tailwindcss";
 
 body {
   margin: 0;
