@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { sendMessage } from "../api/chat.api";
+import { sendMessage, fetchConversationHistory } from "../api/chat.api";
 
 interface Message {
   sender: "user" | "ai";
@@ -20,21 +20,46 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  /* PERSISTENCE: Load chat history and session from localStorage */
+  /* PERSISTENCE: Load chat history and session from backend and localStorage */
   useEffect(() => {
-    const savedMessages = localStorage.getItem("chatMessages");
     const savedSessionId = localStorage.getItem("chatSessionId");
-
-    if (savedMessages) {
-      try {
-        setMessages(JSON.parse(savedMessages));
-      } catch (e) {
-        console.error("Failed to parse saved messages", e);
-      }
-    }
 
     if (savedSessionId) {
       setSessionId(savedSessionId);
+      // Fetch conversation history from backend
+      fetchConversationHistory(savedSessionId)
+        .then((data) => {
+          if (data.messages && data.messages.length > 0) {
+            const formattedMessages: Message[] = data.messages.map((msg: any) => ({
+              sender: msg.sender as "user" | "ai",
+              text: msg.text,
+              timestamp: msg.timestamp || Date.now(),
+            }));
+            setMessages(formattedMessages);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to fetch conversation history:", err);
+          // Fallback to localStorage if backend fetch fails
+          const savedMessages = localStorage.getItem("chatMessages");
+          if (savedMessages) {
+            try {
+              setMessages(JSON.parse(savedMessages));
+            } catch (e) {
+              console.error("Failed to parse saved messages", e);
+            }
+          }
+        });
+    } else {
+      // No sessionId, try localStorage as fallback
+      const savedMessages = localStorage.getItem("chatMessages");
+      if (savedMessages) {
+        try {
+          setMessages(JSON.parse(savedMessages));
+        } catch (e) {
+          console.error("Failed to parse saved messages", e);
+        }
+      }
     }
   }, []);
 

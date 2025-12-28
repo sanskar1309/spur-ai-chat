@@ -71,3 +71,19 @@ export async function handleMessage(
 
   return { reply, sessionId: conversationId };
 }
+
+/* ---------- fetch conversation history ---------- */
+export async function getConversationHistory(sessionId: string) {
+  const rows = await all(
+    `SELECT sender, text, created_at FROM messages
+     WHERE conversation_id = ?
+     ORDER BY created_at ASC`,
+    [sessionId]
+  );
+
+  return rows.map((r: any) => ({
+    sender: r.sender === "user" ? "user" : "ai",
+    text: String(r.text),
+    timestamp: new Date(r.created_at).getTime(),
+  }));
+}
