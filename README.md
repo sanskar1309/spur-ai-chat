@@ -140,7 +140,7 @@ To reset the database, simply delete `chat.db` and restart the backend.
 | `OPENROUTER_API_KEY` | ✅ Yes | - | Your OpenRouter API key |
 | `PORT` | No | `3001` | Backend server port |
 | `NODE_ENV` | No | `development` | Environment mode |
-| `ALLOWED_ORIGINS` | No | `*` (dev) | Comma-separated list of allowed CORS origins (production) |
+| `ALLOWED_ORIGINS` | No | `*` (dev) | Comma-separated list of allowed CORS origins |
 
 ### Frontend (`.env` in `frontend/`)
 
@@ -208,53 +208,6 @@ Store Policies:
 2. **Context-Aware**: Recent conversation history ensures continuity
 3. **Consistent Identity**: System prompt ensures the AI always acts as a support agent
 
-## 🚢 Deployment
-
-### Deployment URL
-
-**Production URL**: _[Add your deployed URL here after deployment]_
-
-### Deployment Steps
-
-#### Backend Deployment (Render/Railway/Railway)
-
-1. **Prepare for Production**:
-   ```bash
-   cd backend
-   npm run build
-   ```
-
-2. **Set Environment Variables**:
-   - `OPENROUTER_API_KEY`: Your API key
-   - `PORT`: Server port (usually auto-assigned)
-   - `NODE_ENV`: `production`
-   - `ALLOWED_ORIGINS`: Your frontend URL (e.g., `https://your-app.vercel.app`)
-
-3. **Start Command**: `npm start`
-
-4. **Database**: SQLite file will be created on first run. For production, consider PostgreSQL or another managed database.
-
-#### Frontend Deployment (Vercel/Netlify)
-
-1. **Build**:
-   ```bash
-   cd frontend
-   npm run build
-   ```
-
-2. **Set Environment Variables**:
-   - `VITE_API_BASE_URL`: Your backend URL (e.g., `https://your-backend.onrender.com`)
-
-3. **Deploy**: Connect your repository to Vercel/Netlify and deploy
-
-### Testing Deployment
-
-After deployment:
-1. Test the health endpoint: `GET /health`
-2. Send a test message through the frontend
-3. Verify database persistence
-4. Check CORS configuration
-
 ## ⚖️ Trade-offs & Design Decisions
 
 ### What We Chose
@@ -273,10 +226,10 @@ After deployment:
    - ✅ Policies always available
    - ❌ Requires code changes to update policies
 
-4. **LocalStorage for Session Persistence**:
-   - ✅ Simple, no backend calls needed
+4. **Session Persistence**:
+   - ✅ Fetches history from backend on page load
+   - ✅ Falls back to localStorage if backend unavailable
    - ❌ Doesn't sync across devices
-   - ❌ Lost if localStorage is cleared
 
 5. **Last 10 Messages Context**:
    - ✅ Balances context with token usage
@@ -290,8 +243,7 @@ After deployment:
    - Implement proper indexing for performance
 
 2. **Session Management**:
-   - Fetch conversation history from backend on page load
-   - Add session restoration endpoint
+   - ✅ Fetch conversation history from backend on page load (implemented)
    - Support multiple concurrent sessions
 
 3. **Error Handling**:
