@@ -319,9 +319,12 @@ This project can be deployed for free using Render (backend) and Vercel/Netlify 
    - Use these settings:
      - **Name**: `spur-ai-chat-backend`
      - **Environment**: `Node`
-     - **Build Command**: `cd backend && npm install && npm run build`
-     - **Start Command**: `cd backend && npm start`
+     - **Root Directory**: `backend` ⚠️ **Important**: Set this to `backend`
+     - **Build Command**: `npm install && npm run build`
+     - **Start Command**: `npm start`
      - **Plan**: Free
+   
+   **Note**: By setting Root Directory to `backend`, all commands run from that directory, so you don't need `cd backend &&` in your commands.
 
 3. **Set Environment Variables** in Render dashboard:
    - `OPENROUTER_API_KEY`: Your OpenRouter API key (required)
@@ -389,13 +392,16 @@ This project can be deployed for free using Render (backend) and Vercel/Netlify 
 
 ### Option 3: Using render.yaml (Alternative Render Setup)
 
-If you prefer using the `render.yaml` configuration file:
+If you prefer using the `render.yaml` configuration file (Render Blueprint):
 
 1. Push the `render.yaml` file to your repository root
 2. In Render dashboard, create a new "Blueprint" instead of a Web Service
 3. Connect your repository - Render will automatically detect and use `render.yaml`
-4. Set the `OPENROUTER_API_KEY` environment variable in the dashboard
-5. Deploy the frontend separately (Vercel/Netlify) and update `ALLOWED_ORIGINS`
+4. **Do NOT set a Root Directory** in the dashboard when using render.yaml (the YAML handles this with `cd backend &&` commands)
+5. Set the `OPENROUTER_API_KEY` environment variable in the dashboard
+6. Deploy the frontend separately (Vercel/Netlify) and update `ALLOWED_ORIGINS`
+
+**Important**: If using `render.yaml`, leave Root Directory **empty** in the dashboard. The YAML file uses `cd backend &&` commands to navigate to the backend directory.
 
 ### Important Notes for Free Deployment
 
@@ -420,6 +426,9 @@ If you prefer using the `render.yaml` configuration file:
 
 #### Backend Issues:
 - **Error: OPENROUTER_API_KEY not set**: Make sure you've added it in Render dashboard → Environment
+- **Error: Root directory "cd backend" does not exist**: 
+  - If using **manual dashboard setup**: Set Root Directory to `backend` (not `cd backend`) and use commands without `cd backend &&`
+  - If using **render.yaml (Blueprint)**: Leave Root Directory **empty** in dashboard; the YAML handles navigation
 - **CORS errors**: Ensure `ALLOWED_ORIGINS` includes your frontend URL (no trailing slash)
 - **Database errors**: SQLite file is created automatically on first run
 

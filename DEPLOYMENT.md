@@ -15,9 +15,12 @@
 4. [ ] Configure:
    - Name: `spur-ai-chat-backend`
    - Environment: `Node`
-   - Build Command: `cd backend && npm install && npm run build`
-   - Start Command: `cd backend && npm start`
+   - **Root Directory**: `backend` ⚠️ **Important**: Set this!
+   - Build Command: `npm install && npm run build`
+   - Start Command: `npm start`
    - Plan: `Free`
+   
+   **Note**: Setting Root Directory to `backend` means commands run from that folder, so don't include `cd backend &&`.
 5. [ ] Add Environment Variables:
    - `OPENROUTER_API_KEY` = your API key
    - `NODE_ENV` = `production`
@@ -45,6 +48,9 @@
 ## 🐛 Troubleshooting
 
 - **Backend won't start**: Check Render logs, verify `OPENROUTER_API_KEY` is set
+- **Error: Root directory "cd backend" does not exist**: 
+  - **Fix**: In Render dashboard → Settings → General, set Root Directory to `backend` (just the word "backend", not "cd backend")
+  - **OR**: Leave Root Directory empty and use `cd backend && npm install && npm run build` in Build Command
 - **CORS errors**: Verify `ALLOWED_ORIGINS` includes your frontend URL
 - **Frontend can't connect**: Check `VITE_API_BASE_URL` in Vercel environment variables
 - **Database errors**: SQLite file is created automatically on first run
