@@ -297,3 +297,157 @@ cd backend && npm run type-check
 # Frontend
 cd frontend && npm run build
 ```
+
+## 🚀 Free Deployment Guide
+
+This project can be deployed for free using Render (backend) and Vercel/Netlify (frontend). Here's how:
+
+### Deployment Architecture
+
+- **Backend**: Deploy to [Render](https://render.com) (free tier available)
+- **Frontend**: Deploy to [Vercel](https://vercel.com) or [Netlify](https://netlify.com) (both free)
+
+### Option 1: Render + Vercel (Recommended)
+
+#### Step 1: Deploy Backend to Render
+
+1. **Create a Render account** at [render.com](https://render.com) (free tier available)
+
+2. **Create a new Web Service**:
+   - Click "New +" → "Web Service"
+   - Connect your GitHub repository
+   - Use these settings:
+     - **Name**: `spur-ai-chat-backend`
+     - **Environment**: `Node`
+     - **Build Command**: `cd backend && npm install && npm run build`
+     - **Start Command**: `cd backend && npm start`
+     - **Plan**: Free
+
+3. **Set Environment Variables** in Render dashboard:
+   - `OPENROUTER_API_KEY`: Your OpenRouter API key (required)
+   - `NODE_ENV`: `production`
+   - `ALLOWED_ORIGINS`: Leave empty for now (we'll set this after frontend deployment)
+
+4. **Deploy**: Render will automatically deploy your backend
+
+5. **Note your backend URL**: After deployment, you'll get a URL like `https://spur-ai-chat-backend.onrender.com`
+
+#### Step 2: Update Backend CORS Settings
+
+1. Go back to Render dashboard → Your backend service → Environment
+2. Add/Update `ALLOWED_ORIGINS` with your frontend URL (we'll come back to this after deploying frontend)
+
+#### Step 3: Deploy Frontend to Vercel
+
+1. **Create a Vercel account** at [vercel.com](https://vercel.com) (free tier available)
+
+2. **Import your repository**:
+   - Click "New Project"
+   - Import your GitHub repository
+
+3. **Configure the project**:
+   - **Framework Preset**: Vite
+   - **Root Directory**: `frontend`
+   - **Build Command**: `npm run build` (automatically detected)
+   - **Output Directory**: `dist` (automatically detected)
+
+4. **Set Environment Variable**:
+   - Add `VITE_API_BASE_URL` with your Render backend URL (e.g., `https://spur-ai-chat-backend.onrender.com`)
+
+5. **Deploy**: Vercel will automatically deploy your frontend
+
+6. **Note your frontend URL**: After deployment, you'll get a URL like `https://spur-ai-chat.vercel.app`
+
+#### Step 4: Update Backend CORS
+
+1. Go back to Render dashboard → Your backend service → Environment
+2. Update `ALLOWED_ORIGINS` with your Vercel frontend URL (e.g., `https://spur-ai-chat.vercel.app`)
+3. Render will automatically redeploy with the new CORS settings
+
+### Option 2: Render + Netlify
+
+#### Frontend Deployment (Netlify)
+
+1. **Create a Netlify account** at [netlify.com](https://netlify.com)
+
+2. **Import your repository**:
+   - Click "Add new site" → "Import an existing project"
+   - Connect your GitHub repository
+
+3. **Configure build settings**:
+   - **Base directory**: `frontend`
+   - **Build command**: `npm run build`
+   - **Publish directory**: `frontend/dist`
+
+4. **Set Environment Variable**:
+   - Site settings → Environment variables
+   - Add `VITE_API_BASE_URL` with your Render backend URL
+
+5. **Deploy**: Netlify will automatically deploy your frontend
+
+6. **Update backend CORS** in Render dashboard with your Netlify frontend URL
+
+### Option 3: Using render.yaml (Alternative Render Setup)
+
+If you prefer using the `render.yaml` configuration file:
+
+1. Push the `render.yaml` file to your repository root
+2. In Render dashboard, create a new "Blueprint" instead of a Web Service
+3. Connect your repository - Render will automatically detect and use `render.yaml`
+4. Set the `OPENROUTER_API_KEY` environment variable in the dashboard
+5. Deploy the frontend separately (Vercel/Netlify) and update `ALLOWED_ORIGINS`
+
+### Important Notes for Free Deployment
+
+#### Render Free Tier Limitations:
+- Services spin down after 15 minutes of inactivity
+- First request after spin-down may take 30-60 seconds (cold start)
+- 750 hours/month free (enough for light usage)
+- SQLite database files persist but may reset on redeploys
+
+#### Vercel/Netlify Free Tier:
+- Generous free tier for static sites
+- Automatic HTTPS
+- Global CDN
+- No cold starts for frontend
+
+#### Database Considerations:
+- SQLite works on Render but has limitations (file-based, may reset on redeploy)
+- For production use, consider upgrading to Render PostgreSQL (paid) or using an external database
+- For demo/personal projects, SQLite on Render is perfectly fine
+
+### Troubleshooting Deployment
+
+#### Backend Issues:
+- **Error: OPENROUTER_API_KEY not set**: Make sure you've added it in Render dashboard → Environment
+- **CORS errors**: Ensure `ALLOWED_ORIGINS` includes your frontend URL (no trailing slash)
+- **Database errors**: SQLite file is created automatically on first run
+
+#### Frontend Issues:
+- **API connection fails**: Check that `VITE_API_BASE_URL` is set correctly in Vercel/Netlify
+- **Build fails**: Ensure all dependencies are in `package.json` (don't use global packages)
+
+#### Environment Variables Checklist:
+
+**Backend (Render)**:
+- ✅ `OPENROUTER_API_KEY` (required)
+- ✅ `NODE_ENV=production`
+- ✅ `ALLOWED_ORIGINS` (your frontend URL, comma-separated for multiple)
+
+**Frontend (Vercel/Netlify)**:
+- ✅ `VITE_API_BASE_URL` (your Render backend URL, no trailing slash)
+
+### Testing Your Deployment
+
+1. Visit your frontend URL
+2. Open browser console (F12) and check for errors
+3. Send a test message in the chat
+4. Check Render logs if backend requests fail
+
+### Updating After Deployment
+
+Both Render and Vercel/Netlify automatically redeploy when you push to your main branch. Just push your changes and wait for the deployment to complete!
+
+---
+
+**Note**: The free tiers are perfect for demos and personal projects. For production applications with high traffic, consider upgrading to paid tiers.
