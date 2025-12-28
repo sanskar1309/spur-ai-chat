@@ -142,7 +142,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
   };
 
   return (
-    <div className={`w-full max-w-[672px] h-[700px] rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
+    <div className={`w-full sm:w-[672px] h-[700px] rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
       isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'
     }`}>
       {/* HEADER */}
