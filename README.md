@@ -122,14 +122,9 @@ The application uses SQLite with two main tables:
 
 The database is automatically initialized on backend startup via `backend/src/db/index.ts`. Tables are created if they don't exist.
 
-### Migrations & Seeding
+### Database Reset
 
-Currently, the application uses a simple schema that's created automatically. For production, consider:
-
-- **Migrations**: Use a tool like `knex.js` or `typeorm` for version-controlled schema changes
-- **Seeding**: Add sample conversations for testing (not implemented currently)
-
-To reset the database, simply delete `chat.db` and restart the backend.
+To reset the database, simply delete `chat.db` and restart the backend. The tables will be automatically recreated on startup.
 
 ## 🔐 Environment Variables
 
@@ -154,9 +149,7 @@ To reset the database, simply delete `chat.db` and restart the backend.
 
 ### Why OpenRouter?
 
-OpenRouter provides a unified API to access multiple LLM providers, including:
-- GPT-4o-mini (primary model)
-- DeepSeek, Mistral, and other free models (commented out as fallbacks)
+OpenRouter provides a unified API to access multiple LLM providers. This application uses GPT-4o-mini.
 
 ### Model Configuration
 
@@ -169,14 +162,11 @@ The application currently uses **GPT-4o-mini** as the primary model:
 
 - **Endpoint**: `https://openrouter.ai/api/v1/chat/completions`
 - **Max Tokens**: 2000 (configurable in `llm.service.ts`)
-- **Fallback Strategy**: If primary model fails, the system attempts other models (currently disabled)
+- **Model**: GPT-4o-mini (single model, no fallback)
 
 ### Rate Limiting
 
-OpenRouter has rate limits based on your API key tier. The application doesn't implement client-side rate limiting, but you should:
-- Monitor usage in OpenRouter dashboard
-- Consider implementing rate limiting middleware for production
-- Set appropriate `max_tokens` to control costs
+OpenRouter has rate limits based on your API key tier. The application doesn't implement client-side rate limiting. Monitor usage in the OpenRouter dashboard and set appropriate `max_tokens` to control costs.
 
 ## 💬 Prompting Strategy
 
@@ -212,9 +202,9 @@ Store Policies:
 
 ### What We Chose
 
-1. **SQLite over PostgreSQL**: 
+1. **SQLite**: 
    - ✅ Simple setup, no external dependencies
-   - ❌ Not ideal for high-concurrency production
+   - ✅ File-based, no separate database server needed
 
 2. **OpenRouter over Direct OpenAI**:
    - ✅ Unified API, model flexibility
@@ -238,12 +228,10 @@ Store Policies:
 ### If I Had More Time...
 
 1. **Database Improvements**:
-   - Migrate to PostgreSQL for production
    - Add database migrations system
    - Implement proper indexing for performance
 
 2. **Session Management**:
-   - ✅ Fetch conversation history from backend on page load (implemented)
    - Support multiple concurrent sessions
 
 3. **Error Handling**:
@@ -258,15 +246,12 @@ Store Policies:
 
 5. **Security**:
    - Input sanitization
-   - SQL injection prevention (already using parameterized queries)
    - API authentication/authorization
-   - CORS restrictions in production
 
 6. **Features**:
    - Message editing/deletion
    - Conversation export
    - Admin dashboard for viewing conversations
-   - Analytics and metrics
 
 7. **Testing**:
    - Unit tests for services
@@ -275,18 +260,16 @@ Store Policies:
 
 8. **Performance**:
    - Implement caching for common queries
-   - Add database connection pooling
    - Optimize LLM response streaming
 
 9. **Monitoring**:
-   - Add logging service (Winston/Pino)
-   - Error tracking (Sentry)
+   - Add logging service
+   - Error tracking
    - Performance monitoring
 
 10. **Documentation**:
     - API documentation (Swagger/OpenAPI)
     - Component documentation
-    - Deployment guides
 
 ## 🛠️ Development
 

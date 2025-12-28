@@ -18,7 +18,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   /* PERSISTENCE: Load chat history and session from backend and localStorage */
   useEffect(() => {
@@ -87,6 +87,14 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
+  /* AUTO-RESIZE: Adjust textarea height based on content */
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+      inputRef.current.style.height = `${Math.min(inputRef.current.scrollHeight, 120)}px`;
+    }
+  }, [input]);
+
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
   };
@@ -103,6 +111,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
+    // Reset textarea height
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+    }
     setLoading(true);
 
     try {
@@ -142,18 +154,18 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
   };
 
   return (
-    <div className={`w-full sm:w-[672px] h-[700px] rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
+    <div className={`w-full sm:w-2xl h-175 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
       isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'
     }`}>
       {/* HEADER */}
       <div className={`flex justify-between items-center px-6 py-4 border-b backdrop-blur-md ${
         isDarkMode
           ? 'border-gray-700 bg-gray-800/50'
-          : 'border-gray-200 bg-gradient-to-r from-purple-50 to-blue-50'
+          : 'border-gray-200 bg-linear-to-r from-purple-50 to-blue-50'
       }`}>
         <div className="flex items-center gap-3">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${
-            isDarkMode ? 'bg-violet-600' : 'bg-gradient-to-br from-purple-500 to-blue-500'
+            isDarkMode ? 'bg-violet-600' : 'bg-linear-to-br from-purple-500 to-blue-500'
           }`}>
             🤖
           </div>
@@ -180,7 +192,7 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
 
       {/* MESSAGES CONTAINER */}
       <div className={`flex-1 overflow-y-auto px-4 py-6 chat-scrollbar ${
-        isDarkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-gray-50 to-white'
+        isDarkMode ? 'bg-gray-900' : 'bg-linear-to-b from-gray-50 to-white'
       }`}>
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center">
@@ -199,8 +211,8 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
             message.sender === "user" ? 'justify-end' : 'justify-start'
           }`}>
             {message.sender === "ai" && (
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${
-                isDarkMode ? 'bg-violet-600' : 'bg-gradient-to-br from-purple-500 to-blue-500'
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0 ${
+                isDarkMode ? 'bg-violet-600' : 'bg-linear-to-br from-purple-500 to-blue-500'
               }`}>
                 🤖
               </div>
@@ -209,15 +221,15 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
             <div className={`max-w-[75%] px-4 py-3 shadow-md ${
               message.sender === "user"
                 ? `${isDarkMode
-                    ? 'bg-gradient-to-br from-emerald-600 to-emerald-500'
-                    : 'bg-gradient-to-br from-emerald-500 to-emerald-400'
-                  } text-white rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-[0.25rem]`
+                    ? 'bg-linear-to-br from-emerald-600 to-emerald-500'
+                    : 'bg-linear-to-br from-emerald-500 to-emerald-400'
+                  } text-white rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-sm`
                 : `${isDarkMode
                     ? 'bg-gray-800 text-gray-100 border border-gray-700'
-                    : 'bg-gradient-to-br from-gray-100 to-blue-50 text-gray-900 border border-gray-200'
-                  } rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-[0.25rem]`
+                    : 'bg-linear-to-br from-gray-100 to-blue-50 text-gray-900 border border-gray-200'
+                  } rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm`
             }`}>
-              <p className="text-sm leading-6 m-0 whitespace-pre-wrap break-words">
+              <p className="text-sm leading-6 m-0 whitespace-pre-wrap wrap-break-word">
                 {message.text}
               </p>
               <p className="text-xs mt-1 opacity-70">
@@ -229,10 +241,10 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
             </div>
 
             {message.sender === "user" && (
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0 ${
                 isDarkMode
                   ? 'bg-emerald-600'
-                  : 'bg-gradient-to-br from-emerald-500 to-emerald-400'
+                  : 'bg-linear-to-br from-emerald-500 to-emerald-400'
               }`}>
                 👤
               </div>
@@ -242,15 +254,15 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
 
         {loading && (
           <div className="flex gap-2 mb-4 justify-start">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${
-              isDarkMode ? 'bg-violet-600' : 'bg-gradient-to-br from-purple-500 to-blue-500'
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0 ${
+              isDarkMode ? 'bg-violet-600' : 'bg-linear-to-br from-purple-500 to-blue-500'
             }`}>
               🤖
             </div>
             <div className={`max-w-[75%] px-4 py-3 shadow-md rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm ${
               isDarkMode
                 ? 'bg-gray-800 text-gray-100 border border-gray-700'
-                : 'bg-gradient-to-br from-gray-100 to-blue-50 text-gray-900 border border-gray-200'
+                : 'bg-linear-to-br from-gray-100 to-blue-50 text-gray-900 border border-gray-200'
             }`}>
               <div className="flex items-center gap-2">
                 <div className="flex gap-1">
@@ -279,29 +291,30 @@ export const ChatWidget: React.FC<ChatWidgetProps> = ({ isDarkMode, setIsDarkMod
       <div className={`p-4 border-t backdrop-blur-md ${
         isDarkMode ? 'border-gray-700 bg-gray-800/50' : 'border-gray-200 bg-gray-50/50'
       }`}>
-        <div className="flex gap-3">
-          <input
+        <div className="flex gap-3 items-end">
+          <textarea
             ref={inputRef}
-            type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={loading}
             placeholder={loading ? "Agent is typing..." : "Type your message..."}
-            className={`flex-1 px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all duration-200 focus:border-purple-500 focus:shadow-[0_0_0_3px_rgba(168,85,247,0.1)] ${
+            rows={1}
+            className={`flex-1 px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all duration-200 focus:border-purple-500 focus:shadow-[0_0_0_3px_rgba(168,85,247,0.1)] resize-none overflow-hidden ${
               isDarkMode
                 ? 'border-gray-700 bg-gray-900 text-gray-100'
                 : 'border-gray-300 bg-white text-gray-900'
             }`}
+            style={{ minHeight: '48px', maxHeight: '120px' }}
           />
 
           <button
             onClick={handleSend}
             disabled={loading || !input.trim()}
-            className={`px-6 py-3 rounded-xl border-none text-white font-medium transition-all duration-200 flex items-center gap-2 hover:scale-105 ${
+            className={`px-6 h-12 rounded-xl border-none text-white font-medium transition-all duration-200 flex items-center gap-2 hover:scale-105 shrink-0 ${
               isDarkMode
-                ? 'bg-gradient-to-r from-violet-600 to-blue-600'
-                : 'bg-gradient-to-r from-purple-500 to-blue-500 shadow-lg'
+                ? 'bg-linear-to-r from-violet-600 to-blue-600'
+                : 'bg-linear-to-r from-purple-500 to-blue-500 shadow-lg'
             } ${
               loading || !input.trim() ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
             }`}
