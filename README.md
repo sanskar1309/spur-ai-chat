@@ -362,16 +362,3 @@ cd backend && npm run type-check
 # Frontend
 cd frontend && npm run build
 ```
-
-## 📝 License
-
-[Add your license here]
-
-## 👤 Author
-
-[Add your name/contact here]
-
----
-
-**Note**: Remember to never commit `.env` files or API keys to version control. The `.gitignore` file is configured to exclude these files.
-
